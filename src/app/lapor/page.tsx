@@ -539,7 +539,7 @@ export default function LaporPage() {
                   }
                 }}
                 disabled={submitting}
-                className={`w-full h-14 rounded-2xl font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 ${
+                className={`w-full h-13 rounded-2xl font-black text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 px-3 transition-all ${
                   geo?.isInside && !submitting
                     ? "nb-btn bg-[#ffe600] text-[#121212]"
                     : "nb-btn bg-[#ff99c8] text-[#121212] hover:bg-[#ff80b5]"
@@ -547,17 +547,17 @@ export default function LaporPage() {
               >
                 {submitting ? (
                   <>
-                    <Loader2 className="w-5 h-5 animate-spin stroke-[3px]" />
+                    <Loader2 className="w-4 h-4 animate-spin stroke-[3px]" />
                     MENGIRIM ADUAN...
                   </>
                 ) : !geo?.isInside ? (
                   <>
-                    <AlertTriangle className="w-5 h-5 stroke-[3px] text-[#121212]" />
-                    GPS BELUM AKTIF / DI LUAR AREA (KLIK CEK)
+                    <RotateCw className="w-4 h-4 stroke-[3px]" />
+                    KLIK UNTUK CEK LOKASI GPS ➔
                   </>
                 ) : (
                   <>
-                    <Send className="w-5 h-5 stroke-[3px]" />
+                    <Send className="w-4 h-4 stroke-[3px]" />
                     KIRIM KE BALAI DESA ➔
                   </>
                 )}
@@ -565,7 +565,7 @@ export default function LaporPage() {
 
               {!geo?.isInside && (
                 <p className="text-[10px] font-mono font-bold text-center text-rose-700 pt-0.5">
-                  ⚠️ Klik tombol di atas atau tombol "Cek GPS" untuk mengaktifkan lokasi.
+                  ⚠️ Wajib berada di Desa Rau & aktifkan GPS untuk mengirim.
                 </p>
               )}
             </div>
