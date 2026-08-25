@@ -203,7 +203,13 @@ export default function LaporPage() {
           className={`nb-box rounded-xl p-3.5 space-y-2 transition-all ${
             shakeGps ? "animate-shake ring-4 ring-rose-500" : ""
           } ${
-            geo?.isInside ? "bg-[#a7f3d0]" : geoError ? "bg-[#ff99c8]" : "bg-[#fff]"
+            geoLoading
+              ? "scanning-radar"
+              : geo?.isInside
+              ? "bg-[#a7f3d0]"
+              : geoError
+              ? "bg-[#ff99c8]"
+              : "bg-[#fff]"
           }`}
         >
           <div className="flex items-center justify-between">
@@ -218,14 +224,16 @@ export default function LaporPage() {
               type="button"
               onClick={handleLocate}
               disabled={geoLoading}
-              className={`nb-btn text-[10px] font-black px-3 py-1.5 rounded-lg uppercase flex items-center gap-1.5 transition-all ${
-                !geo?.isInside
-                  ? "animate-gps-pulse text-[#121212] font-black"
-                  : "bg-[#121212] text-white"
+              className={`nb-btn text-[10px] font-black px-3 py-1.5 rounded-lg uppercase flex items-center gap-1.5 cursor-pointer ${
+                geoLoading
+                  ? "bg-[#ffe600] text-[#121212]"
+                  : !geo?.isInside
+                  ? "bg-[#ff99c8] text-[#121212] hover:bg-[#ffe600]"
+                  : "bg-[#121212] text-white hover:bg-[#333]"
               }`}
             >
               <RotateCw className={`w-3.5 h-3.5 stroke-[3px] ${geoLoading ? "animate-spin" : ""}`} />
-              {!geo?.isInside ? "👉 KLIK CEK GPS" : "CEK ULANG"}
+              {geoLoading ? "MEMINDAI..." : !geo?.isInside ? "CEK GPS SEKARANG" : "CEK ULANG"}
             </button>
           </div>
 

@@ -27,7 +27,8 @@
 .nb-btn {
   border: 2.5px solid #121212;
   box-shadow: 3.5px 3.5px 0px #121212;
-  transition: all 0.1s ease-in-out;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
+  user-select: none;
 }
 
 .nb-btn:hover {
@@ -36,8 +37,8 @@
 }
 
 .nb-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0px #121212;
+  transform: translate(3px, 3px) !important;
+  box-shadow: 0.5px 0.5px 0px #121212 !important;
 }
 
 .nb-btn-disabled {
@@ -80,20 +81,18 @@
   animation: nb-shake 0.4s ease-in-out;
 }
 
-/* Animasi Perhatian Berdenyut Otomatis untuk Tombol Cek GPS */
-@keyframes nb-gps-pulse {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 3px 3px 0px #121212;
-    background-color: #ffe600;
+/* Efek Refresh Gelombang di Box Radar saat Cek Lokasi */
+@keyframes radar-scan {
+  0% {
+    background-position: -200% 0;
   }
-  50% {
-    transform: scale(1.08) translate(-1px, -1px);
-    box-shadow: 5px 5px 0px #121212;
-    background-color: #ff99c8;
+  100% {
+    background-position: 200% 0;
   }
 }
 
-.animate-gps-pulse {
-  animation: nb-gps-pulse 1.6s infinite ease-in-out;
+.scanning-radar {
+  background: linear-gradient(90deg, #ffe600 0%, #fff 50%, #ffe600 100%);
+  background-size: 200% 100%;
+  animation: radar-scan 1.2s infinite linear;
 }
