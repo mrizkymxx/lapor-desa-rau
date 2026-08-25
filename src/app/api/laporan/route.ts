@@ -1,6 +1,26 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
+// In-Memory Rate Limiter (Max 5 request per jam per IP)
+const ipRequestMap = new Map<string, { count: number; expiresAt: number }>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = ipRequestMap.get(ip);
+
+  if (!entry || now > entry.expiresAt) {
+    ipRequestMap.set(ip, { count: 1, expiresAt: now + 60 * 60 * 1000 });
+    return false;
+  }
+
+  if (entry.count >= 5) {
+    return true;
+  }
+
+  entry.count++;
+  return false;
+}
+
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
@@ -39,6 +59,15 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    // 1. Cek Rate Limiter
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "anonymous";
+    if (isRateLimited(ip)) {
+      return NextResponse.json(
+        { error: "Terlalu banyak aduan dikirim. Demi keamanan, batas maksimal 5 aduan per jam." },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json();
 
     const {

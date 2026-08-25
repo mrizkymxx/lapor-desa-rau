@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   MapPin,
   CheckCircle2,
@@ -15,14 +16,18 @@ import {
   ChevronRight,
   Flame,
   Users,
+  Search,
+  Share2,
 } from "lucide-react";
 import { BottomNav } from "@/components/BottomNav";
 import { StatusBadge } from "@/components/StatusBadge";
 import { LaporanRow } from "@/lib/supabase";
 
 export default function LandingPage() {
+  const router = useRouter();
   const [recentReports, setRecentReports] = useState<LaporanRow[]>([]);
   const [stats, setStats] = useState({ total: 0, selesai: 0 });
+  const [searchTicket, setSearchTicket] = useState("");
 
   useEffect(() => {
     fetchSummary();
@@ -41,6 +46,12 @@ export default function LandingPage() {
     } catch (e) {
       console.error(e);
     }
+  };
+
+  const handleLacakSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchTicket.trim()) return;
+    router.push(`/lacak/${searchTicket.trim()}`);
   };
 
   return (
@@ -95,6 +106,30 @@ export default function LandingPage() {
               Lihat Papan Aspirasi Warga ➔
             </Link>
           </div>
+        </section>
+
+        {/* Kotak Lacak Tiket Cepat */}
+        <section className="nb-box bg-white rounded-2xl p-3.5 space-y-2">
+          <span className="text-[11px] font-black uppercase text-[#121212] flex items-center gap-1.5">
+            <Search className="w-3.5 h-3.5 stroke-[3px]" />
+            SUDAH PERNAH LAPOR? LACAK DI SINI:
+          </span>
+          <form onSubmit={handleLacakSubmit} className="flex gap-2">
+            <input
+              type="text"
+              required
+              placeholder="Contoh: RAU-20260825-XXXX"
+              value={searchTicket}
+              onChange={(e) => setSearchTicket(e.target.value)}
+              className="nb-input flex-1 h-10 px-3 rounded-lg text-xs font-mono font-bold bg-[#f6f5f0] placeholder:text-[#888]"
+            />
+            <button
+              type="submit"
+              className="nb-btn bg-[#121212] text-[#ffe600] px-3 h-10 rounded-lg text-xs font-black uppercase shrink-0"
+            >
+              Lacak ➔
+            </button>
+          </form>
         </section>
 
         {/* Counter Stats Bento */}

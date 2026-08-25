@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, MapPin, Calendar, CheckCircle2, Clock, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, CheckCircle2, Clock, Image as ImageIcon, Share2, ExternalLink } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { LaporanRow } from "@/lib/supabase";
 
@@ -14,6 +14,7 @@ export default function LacakDetailPage() {
 
   const [laporan, setLaporan] = useState<LaporanRow | null>(null);
   const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (id) fetchDetail();
@@ -33,6 +34,21 @@ export default function LacakDetailPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleShareWA = () => {
+    if (!laporan) return;
+    const currentUrl = window.location.href;
+    const text = encodeURIComponent(
+      `📢 *LAPOR DESA RAU*\n\n📌 *${laporan.judul}*\nKode Tiket: ${laporan.kode_tiket}\nStatus: ${laporan.status.toUpperCase()}\n\nPantau perkembangan tindak lanjutnya di tautan berikut:\n${currentUrl}`
+    );
+    window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   if (loading) {
@@ -65,18 +81,30 @@ export default function LacakDetailPage() {
   return (
     <div className="flex-1 flex flex-col pb-16 bg-[#f6f5f0]">
       {/* Header */}
-      <header className="bg-[#121212] text-[#f6f5f0] p-4 border-b-[3px] border-[#121212] flex items-center gap-3">
+      <header className="bg-[#121212] text-[#f6f5f0] p-4 border-b-[3px] border-[#121212] flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="nb-btn bg-[#ffe600] text-[#121212] p-1.5 rounded-lg active:scale-90"
+          >
+            <ArrowLeft className="w-5 h-5 stroke-[3px]" />
+          </button>
+          <div>
+            <h1 className="text-base font-black uppercase leading-tight">STATUS LAPORAN</h1>
+            <span className="font-mono text-xs font-bold text-[#ffe600]">{laporan.kode_tiket}</span>
+          </div>
+        </div>
+
         <button
           type="button"
-          onClick={() => router.back()}
-          className="nb-btn bg-[#ffe600] text-[#121212] p-1.5 rounded-lg active:scale-90"
+          onClick={handleShareWA}
+          className="nb-btn bg-[#a7f3d0] text-[#121212] text-xs font-black px-2.5 py-1.5 rounded-lg flex items-center gap-1 uppercase"
+          title="Bagi ke WhatsApp"
         >
-          <ArrowLeft className="w-5 h-5 stroke-[3px]" />
+          <Share2 className="w-3.5 h-3.5 stroke-[3px]" />
+          Bagi WA
         </button>
-        <div>
-          <h1 className="text-base font-black uppercase leading-tight">STATUS LAPORAN</h1>
-          <span className="font-mono text-xs font-bold text-[#ffe600]">{laporan.kode_tiket}</span>
-        </div>
       </header>
 
       <main className="p-4 space-y-4 flex-1">
@@ -103,7 +131,63 @@ export default function LacakDetailPage() {
               })}
             </span>
           </div>
+
+          {/* Quick Share Copy */}
+          <div className="pt-2 border-t border-[#121212]/20 flex gap-2">
+            <button
+              type="button"
+              onClick={handleShareWA}
+              className="nb-btn flex-1 py-2 bg-[#25D366] text-[#121212] font-black text-xs rounded-xl uppercase flex items-center justify-center gap-1.5"
+            >
+              <Share2 className="w-3.5 h-3.5 stroke-[3px]" />
+              Sebar ke Grup WA RT
+            </button>
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className="nb-btn px-3 py-2 bg-[#f6f5f0] text-[#121212] font-black text-xs rounded-xl uppercase shrink-0"
+            >
+              {copied ? "Disalin ✓" : "Salin Link"}
+            </button>
+          </div>
         </div>
+
+        {/* Peta Lokasi Titik Koordinat (OpenStreetMap Pin) */}
+        {laporan.lat && laporan.lng && (
+          <div className="nb-box rounded-2xl p-4 space-y-2 bg-white">
+            <div className="flex items-center justify-between border-b-2 border-[#121212] pb-1">
+              <span className="text-xs font-black uppercase text-[#121212] flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5 stroke-[3px]" />
+                TITIK KOORDINAT DI PETA DESA
+              </span>
+              <a
+                href={`https://maps.google.com/?q=${laporan.lat},${laporan.lng}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-[10px] font-black underline flex items-center gap-0.5 text-emerald-800"
+              >
+                Buka Maps <ExternalLink className="w-2.5 h-2.5" />
+              </a>
+            </div>
+
+            {/* Embedded OpenStreetMap Preview */}
+            <div className="rounded-xl border-[2.5px] border-[#121212] overflow-hidden h-44 shadow-[2.5px_2.5px_0px_#121212] relative bg-[#e5e3df]">
+              <iframe
+                title="Peta Titik Laporan"
+                width="100%"
+                height="100%"
+                frameBorder="0"
+                scrolling="no"
+                marginHeight={0}
+                marginWidth={0}
+                src={`https://www.openstreetmap.org/export/embed.html?bbox=${laporan.lng - 0.003}%2C${laporan.lat - 0.003}%2C${laporan.lng + 0.003}%2C${laporan.lat + 0.003}&layer=mapnik&marker=${laporan.lat}%2C${laporan.lng}`}
+              />
+            </div>
+            <p className="text-[10px] font-mono font-bold text-[#666]">
+              Koordinat: {laporan.lat.toFixed(6)}, {laporan.lng.toFixed(6)}
+            </p>
+          </div>
+        )}
 
         {/* Tanggapan Balai Desa */}
         {laporan.tanggapan_petugas && (
@@ -121,7 +205,7 @@ export default function LacakDetailPage() {
               {laporan.tanggapan_petugas}
             </p>
 
-            {/* Foto Bukti Perbaikan dari Petugas (Jika Ada) */}
+            {/* Foto Bukti Perbaikan dari Petugas */}
             {laporan.foto_selesai_url && (
               <div className="space-y-1.5 pt-1">
                 <span className="text-[10px] font-black uppercase text-[#121212] flex items-center gap-1">
