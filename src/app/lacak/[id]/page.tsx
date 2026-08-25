@@ -86,7 +86,7 @@ export default function LacakDetailPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="nb-btn bg-[#ffe600] text-[#121212] p-1.5 rounded-lg active:scale-90"
+            className="nb-btn bg-[#ffe600] text-[#121212] p-1 rounded-lg active:scale-90"
           >
             <ArrowLeft className="w-5 h-5 stroke-[3px]" />
           </button>
@@ -152,7 +152,7 @@ export default function LacakDetailPage() {
           </div>
         </div>
 
-        {/* Peta Lokasi Titik Koordinat (OpenStreetMap Pin) */}
+        {/* Peta Lokasi Titik Koordinat (Clean OpenStreetMap Pin Viewport) */}
         {laporan.lat && laporan.lng && (
           <div className="nb-box rounded-2xl p-4 space-y-2 bg-white">
             <div className="flex items-center justify-between border-b-2 border-[#121212] pb-1">
@@ -166,20 +166,16 @@ export default function LacakDetailPage() {
                 rel="noreferrer"
                 className="text-[10px] font-black underline flex items-center gap-0.5 text-emerald-800"
               >
-                Buka Maps <ExternalLink className="w-2.5 h-2.5" />
+                Buka Google Maps <ExternalLink className="w-2.5 h-2.5" />
               </a>
             </div>
 
-            {/* Embedded OpenStreetMap Preview */}
+            {/* Clean Crop Container: Memotong banner footer teks OpenStreetMap */}
             <div className="rounded-xl border-[2.5px] border-[#121212] overflow-hidden h-44 shadow-[2.5px_2.5px_0px_#121212] relative bg-[#e5e3df]">
               <iframe
                 title="Peta Titik Laporan"
-                width="100%"
-                height="100%"
-                frameBorder="0"
+                className="w-full h-[calc(100%+42px)] -mt-1 border-0"
                 scrolling="no"
-                marginHeight={0}
-                marginWidth={0}
                 src={`https://www.openstreetmap.org/export/embed.html?bbox=${laporan.lng - 0.003}%2C${laporan.lat - 0.003}%2C${laporan.lng + 0.003}%2C${laporan.lat + 0.003}&layer=mapnik&marker=${laporan.lat}%2C${laporan.lng}`}
               />
             </div>
