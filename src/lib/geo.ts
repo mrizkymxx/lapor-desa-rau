@@ -1,8 +1,9 @@
-// Titik Koordinat Pusat Desa Rau, Kec. Kedung, Kab. Jepara
+// Titik Koordinat Presisi Balai Desa Rau, Kec. Kedung, Kab. Jepara
+// Google Maps: https://maps.app.goo.gl/PwiQ1iE1RmLka1gD6
 export const DESA_RAU = {
-  lat: -6.6715,
-  lng: 110.6650,
-  nama: "Desa Rau, Kec. Kedung, Jepara",
+  lat: -6.646463,
+  lng: 110.667857,
+  nama: "Balai Desa Rau, Kec. Kedung, Jepara",
   maxRadiusMeter: 2000, // 2 KM batas keliling desa
 };
 
