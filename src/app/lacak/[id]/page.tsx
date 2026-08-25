@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, MapPin, Calendar, CheckCircle2, Clock, Image as ImageIcon, ExternalLink } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, CheckCircle2, Clock, Image as ImageIcon, ExternalLink, X, ZoomIn } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { LaporanRow } from "@/lib/supabase";
 
@@ -14,6 +14,7 @@ export default function LacakDetailPage() {
 
   const [laporan, setLaporan] = useState<LaporanRow | null>(null);
   const [loading, setLoading] = useState(true);
+  const [modalImage, setModalImage] = useState<{ url: string; title: string } | null>(null);
 
   useEffect(() => {
     if (id) fetchDetail();
@@ -64,6 +65,60 @@ export default function LacakDetailPage() {
 
   return (
     <div className="flex-1 flex flex-col pb-16 bg-[#f6f5f0]">
+      {/* Lightbox Modal Pratinjau Foto Penuh */}
+      {modalImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex flex-col items-center justify-center p-4 animate-in fade-in duration-150"
+          onClick={() => setModalImage(null)}
+        >
+          <div
+            className="nb-box bg-white rounded-2xl w-full max-w-lg p-3 space-y-2 shadow-2xl relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b-2 border-[#121212] pb-2">
+              <span className="text-xs font-black uppercase text-[#121212] flex items-center gap-1.5">
+                <ImageIcon className="w-4 h-4 text-emerald-700 stroke-[3px]" />
+                {modalImage.title}
+              </span>
+              <button
+                type="button"
+                onClick={() => setModalImage(null)}
+                className="nb-btn bg-[#ff99c8] text-[#121212] p-1 rounded-lg hover:bg-rose-300 active:scale-90"
+              >
+                <X className="w-4 h-4 stroke-[3px]" />
+              </button>
+            </div>
+
+            <div className="rounded-xl border-2 border-[#121212] overflow-hidden bg-slate-900 flex items-center justify-center max-h-[70vh]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={modalImage.url}
+                alt={modalImage.title}
+                className="w-full h-auto max-h-[70vh] object-contain"
+              />
+            </div>
+
+            <div className="pt-1 flex items-center justify-between">
+              <a
+                href={modalImage.url}
+                target="_blank"
+                rel="noreferrer"
+                className="nb-btn bg-[#ffe600] text-[#121212] text-[10px] font-black uppercase px-2.5 py-1 rounded flex items-center gap-1"
+              >
+                Buka Tab Baru <ExternalLink className="w-3 h-3 stroke-[2.5px]" />
+              </a>
+              <button
+                type="button"
+                onClick={() => setModalImage(null)}
+                className="nb-btn bg-[#f6f5f0] text-[#121212] text-[10px] font-black uppercase px-3 py-1 rounded"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <header className="bg-[#121212] text-[#f6f5f0] p-4 border-b-[3px] border-[#121212] flex items-center gap-3">
         <button
@@ -158,17 +213,28 @@ export default function LacakDetailPage() {
             {/* Foto Bukti Perbaikan dari Petugas */}
             {laporan.foto_selesai_url && (
               <div className="space-y-1.5 pt-1">
-                <span className="text-[10px] font-black uppercase text-[#121212] flex items-center gap-1">
-                  <ImageIcon className="w-3.5 h-3.5" />
-                  Foto Bukti Pengerjaan Lapangan:
-                </span>
-                <div className="rounded-xl border-[2.5px] border-[#121212] overflow-hidden shadow-[2.5px_2.5px_0px_#121212] bg-white">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase text-[#121212] flex items-center gap-1">
+                    <ImageIcon className="w-3.5 h-3.5" />
+                    Foto Bukti Pengerjaan Lapangan:
+                  </span>
+                  <span className="text-[9px] font-mono font-bold bg-[#121212] text-[#ffe600] px-1.5 py-0.2 rounded flex items-center gap-0.5">
+                    <ZoomIn className="w-2.5 h-2.5" /> KLIK FOTO
+                  </span>
+                </div>
+                <div
+                  onClick={() => setModalImage({ url: laporan.foto_selesai_url!, title: "Foto Bukti Pengerjaan Lapangan (Petugas)" })}
+                  className="rounded-xl border-[2.5px] border-[#121212] overflow-hidden shadow-[2.5px_2.5px_0px_#121212] bg-white cursor-pointer group relative"
+                >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={laporan.foto_selesai_url}
                     alt="Bukti Selesai Petugas"
-                    className="w-full h-auto max-h-72 object-cover"
+                    className="w-full h-auto max-h-72 object-cover group-hover:scale-[1.02] transition-transform duration-200"
                   />
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-black text-xs gap-1.5">
+                    <ZoomIn className="w-4 h-4" /> Klik untuk perbesar
+                  </div>
                 </div>
               </div>
             )}
@@ -199,16 +265,27 @@ export default function LacakDetailPage() {
 
           {laporan.foto_url ? (
             <div className="space-y-1">
-              <span className="text-[10px] font-black text-[#555] uppercase block">
-                Foto Dikirim Oleh Pelapor:
-              </span>
-              <div className="rounded-xl border-[2.5px] border-[#121212] overflow-hidden shadow-[3px_3px_0px_#121212] bg-white">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black text-[#555] uppercase block">
+                  Foto Dikirim Oleh Pelapor:
+                </span>
+                <span className="text-[9px] font-mono font-bold bg-[#ffe600] border border-[#121212] text-[#121212] px-1.5 py-0.2 rounded flex items-center gap-0.5">
+                  <ZoomIn className="w-2.5 h-2.5" /> KLIK FOTO
+                </span>
+              </div>
+              <div
+                onClick={() => setModalImage({ url: laporan.foto_url!, title: "Foto Bukti Laporan Warga" })}
+                className="rounded-xl border-[2.5px] border-[#121212] overflow-hidden shadow-[3px_3px_0px_#121212] bg-white cursor-pointer group relative"
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={laporan.foto_url}
                   alt="Bukti Lampiran Warga"
-                  className="w-full h-auto max-h-80 object-cover"
+                  className="w-full h-auto max-h-80 object-cover group-hover:scale-[1.02] transition-transform duration-200"
                 />
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-black text-xs gap-1.5">
+                  <ZoomIn className="w-4 h-4" /> Klik untuk perbesar
+                </div>
               </div>
             </div>
           ) : (

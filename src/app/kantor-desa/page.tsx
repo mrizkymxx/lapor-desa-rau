@@ -17,6 +17,8 @@ import {
   Phone,
   ArrowLeft,
   Image as ImageIcon,
+  ZoomIn,
+  ExternalLink,
 } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { LaporanRow } from "@/lib/supabase";
@@ -27,6 +29,7 @@ export default function KantorDesaPage() {
   const [laporan, setLaporan] = useState<LaporanRow[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedLaporan, setSelectedLaporan] = useState<LaporanRow | null>(null);
+  const [modalImage, setModalImage] = useState<{ url: string; title: string } | null>(null);
 
   // Form Tindak Lanjut
   const [statusInput, setStatusInput] = useState<"masuk" | "diproses" | "selesai" | "ditolak">("diproses");
@@ -250,6 +253,60 @@ export default function KantorDesaPage() {
 
   return (
     <div className="flex-1 flex flex-col pb-12 bg-[#f6f5f0]">
+      {/* Lightbox Modal Pratinjau Foto Penuh Petugas */}
+      {modalImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex flex-col items-center justify-center p-4 animate-in fade-in duration-150"
+          onClick={() => setModalImage(null)}
+        >
+          <div
+            className="nb-box bg-white rounded-2xl w-full max-w-lg p-3 space-y-2 shadow-2xl relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b-2 border-[#121212] pb-2">
+              <span className="text-xs font-black uppercase text-[#121212] flex items-center gap-1.5 line-clamp-1">
+                <ImageIcon className="w-4 h-4 text-emerald-700 stroke-[3px] shrink-0" />
+                {modalImage.title}
+              </span>
+              <button
+                type="button"
+                onClick={() => setModalImage(null)}
+                className="nb-btn bg-[#ff99c8] text-[#121212] p-1 rounded-lg hover:bg-rose-300 active:scale-90"
+              >
+                <X className="w-4 h-4 stroke-[3px]" />
+              </button>
+            </div>
+
+            <div className="rounded-xl border-2 border-[#121212] overflow-hidden bg-slate-900 flex items-center justify-center max-h-[70vh]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={modalImage.url}
+                alt={modalImage.title}
+                className="w-full h-auto max-h-[70vh] object-contain"
+              />
+            </div>
+
+            <div className="pt-1 flex items-center justify-between">
+              <a
+                href={modalImage.url}
+                target="_blank"
+                rel="noreferrer"
+                className="nb-btn bg-[#ffe600] text-[#121212] text-[10px] font-black uppercase px-2.5 py-1 rounded flex items-center gap-1"
+              >
+                Buka Tab Baru <ExternalLink className="w-3 h-3 stroke-[2.5px]" />
+              </a>
+              <button
+                type="button"
+                onClick={() => setModalImage(null)}
+                className="nb-btn bg-[#f6f5f0] text-[#121212] text-[10px] font-black uppercase px-3 py-1 rounded"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header Admin */}
       <header className="bg-[#121212] text-[#f6f5f0] p-4 border-b-[3px] border-[#121212] flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -338,13 +395,24 @@ export default function KantorDesaPage() {
 
                 {/* Foto Lampiran dari Warga (Jika Ada) */}
                 {selectedLaporan.foto_url && (
-                  <div className="rounded-lg border-2 border-[#121212] overflow-hidden bg-white">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={selectedLaporan.foto_url}
-                      alt="Foto Aduan Warga"
-                      className="w-full h-36 object-cover"
-                    />
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-black text-[#555] uppercase block flex items-center justify-between">
+                      <span>Foto Dikirim Warga:</span>
+                      <span className="text-[9px] font-mono font-bold bg-white border border-[#121212] px-1 py-0.2 rounded">
+                        KLIK UNTUK ZOOM
+                      </span>
+                    </span>
+                    <div
+                      onClick={() => setModalImage({ url: selectedLaporan.foto_url!, title: `Foto Aduan: ${selectedLaporan.judul}` })}
+                      className="rounded-lg border-2 border-[#121212] overflow-hidden bg-white cursor-pointer hover:opacity-90 transition-opacity"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={selectedLaporan.foto_url}
+                        alt="Foto Aduan Warga"
+                        className="w-full h-36 object-cover"
+                      />
+                    </div>
                   </div>
                 )}
 
@@ -498,9 +566,15 @@ export default function KantorDesaPage() {
                 </div>
 
                 {item.foto_url && (
-                  <div className="relative rounded-lg border border-[#121212] overflow-hidden h-24 bg-slate-100">
+                  <div
+                    onClick={() => setModalImage({ url: item.foto_url!, title: `Foto Aduan: ${item.judul}` })}
+                    className="relative rounded-lg border border-[#121212] overflow-hidden h-24 bg-slate-100 cursor-pointer hover:opacity-90 transition-opacity"
+                  >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={item.foto_url} alt="Thumbnail" className="w-full h-full object-cover" />
+                    <span className="absolute bottom-1 right-1 bg-[#121212]/80 text-[#ffe600] text-[8px] font-mono font-black px-1 py-0.2 rounded">
+                      ZOOM
+                    </span>
                   </div>
                 )}
 
