@@ -194,7 +194,49 @@ export default function LacakDetailPage() {
           </div>
         )}
 
-        {/* Tanggapan Balai Desa */}
+        {/* 1. Foto Bukti Awal dari Warga (Dahulukan Sebelum Tanggapan) */}
+        <div className="nb-box rounded-2xl p-4 space-y-3 bg-white">
+          <span className="text-xs font-black uppercase text-[#121212] block border-b-2 border-[#121212] pb-1">
+            KETERANGAN & FOTO KONDISI AWAL
+          </span>
+
+          <p className="text-xs font-semibold text-[#333] whitespace-pre-wrap leading-relaxed">
+            {laporan.deskripsi}
+          </p>
+
+          {laporan.foto_url ? (
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black text-[#555] uppercase block">
+                  Foto Dikirim Oleh Pelapor:
+                </span>
+                <span className="text-[9px] font-mono font-bold bg-[#ffe600] border border-[#121212] text-[#121212] px-1.5 py-0.2 rounded flex items-center gap-0.5">
+                  <ZoomIn className="w-2.5 h-2.5" /> KLIK FOTO
+                </span>
+              </div>
+              <div
+                onClick={() => setModalImage({ url: laporan.foto_url!, title: "Foto Bukti Laporan Warga" })}
+                className="rounded-xl border-[2.5px] border-[#121212] overflow-hidden shadow-[3px_3px_0px_#121212] bg-white cursor-pointer group relative"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={laporan.foto_url}
+                  alt="Bukti Lampiran Warga"
+                  className="w-full h-auto max-h-80 object-cover group-hover:scale-[1.02] transition-transform duration-200"
+                />
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-black text-xs gap-1.5">
+                  <ZoomIn className="w-4 h-4" /> Klik untuk perbesar
+                </div>
+              </div>
+            </div>
+          ) : (
+            <p className="text-[11px] font-mono text-[#888] italic pt-1">
+              (Pelapor tidak menyertakan foto lampiran)
+            </p>
+          )}
+        </div>
+
+        {/* 2. Tanggapan & Hasil Pengerjaan Petugas Balai Desa */}
         {laporan.tanggapan_petugas && (
           <div className="nb-box bg-[#a7f3d0] rounded-2xl p-4 space-y-3">
             <div className="flex items-center justify-between border-b-2 border-[#121212] pb-1.5">
@@ -252,48 +294,6 @@ export default function LacakDetailPage() {
             </div>
           </div>
         )}
-
-        {/* Foto Bukti Awal dari Warga */}
-        <div className="nb-box rounded-2xl p-4 space-y-3 bg-white">
-          <span className="text-xs font-black uppercase text-[#121212] block border-b-2 border-[#121212] pb-1">
-            KETERANGAN & FOTO KONDISI AWAL
-          </span>
-
-          <p className="text-xs font-semibold text-[#333] whitespace-pre-wrap leading-relaxed">
-            {laporan.deskripsi}
-          </p>
-
-          {laporan.foto_url ? (
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black text-[#555] uppercase block">
-                  Foto Dikirim Oleh Pelapor:
-                </span>
-                <span className="text-[9px] font-mono font-bold bg-[#ffe600] border border-[#121212] text-[#121212] px-1.5 py-0.2 rounded flex items-center gap-0.5">
-                  <ZoomIn className="w-2.5 h-2.5" /> KLIK FOTO
-                </span>
-              </div>
-              <div
-                onClick={() => setModalImage({ url: laporan.foto_url!, title: "Foto Bukti Laporan Warga" })}
-                className="rounded-xl border-[2.5px] border-[#121212] overflow-hidden shadow-[3px_3px_0px_#121212] bg-white cursor-pointer group relative"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={laporan.foto_url}
-                  alt="Bukti Lampiran Warga"
-                  className="w-full h-auto max-h-80 object-cover group-hover:scale-[1.02] transition-transform duration-200"
-                />
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-black text-xs gap-1.5">
-                  <ZoomIn className="w-4 h-4" /> Klik untuk perbesar
-                </div>
-              </div>
-            </div>
-          ) : (
-            <p className="text-[11px] font-mono text-[#888] italic pt-1">
-              (Pelapor tidak menyertakan foto lampiran)
-            </p>
-          )}
-        </div>
       </main>
     </div>
   );
