@@ -68,3 +68,14 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Animasi Getar (Shake Alert) untuk GPS Error / Belum Aktif */
+@keyframes nb-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.animate-shake {
+  animation: nb-shake 0.4s ease-in-out;
+}

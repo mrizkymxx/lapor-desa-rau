@@ -31,6 +31,7 @@ export default function LaporPage() {
   const [geo, setGeo] = useState<GeoLocationResult | null>(null);
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
+  const [shakeGps, setShakeGps] = useState(false);
 
   const [kategoriId, setKategoriId] = useState<number>(1);
   const [judul, setJudul] = useState("");
@@ -44,6 +45,7 @@ export default function LaporPage() {
   const [fotoBlob, setFotoBlob] = useState<Blob | null>(null);
   const [fotoPreview, setFotoPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const radarSectionRef = useRef<HTMLElement>(null);
 
   const [submitting, setSubmitting] = useState(false);
   const [ticketResult, setTicketResult] = useState<any | null>(null);
@@ -51,6 +53,17 @@ export default function LaporPage() {
   useEffect(() => {
     handleLocate();
   }, []);
+
+  const triggerGpsShakeAndScroll = () => {
+    setShakeGps(true);
+    // Getar perangkat HP jika didukung (Vibration API)
+    if (typeof window !== "undefined" && navigator.vibrate) {
+      navigator.vibrate([100, 50, 100]);
+    }
+    // Scroll mulus ke card GPS di atas
+    radarSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    setTimeout(() => setShakeGps(false), 800);
+  };
 
   const handleLocate = async () => {
     setGeoLoading(true);
@@ -186,7 +199,10 @@ export default function LaporPage() {
       <main className="p-4 space-y-4 flex-1">
         {/* GPS Gate Neo-Brutalist Banner */}
         <section
-          className={`nb-box rounded-xl p-3.5 space-y-2 ${
+          ref={radarSectionRef}
+          className={`nb-box rounded-xl p-3.5 space-y-2 transition-all ${
+            shakeGps ? "animate-shake ring-4 ring-rose-500" : ""
+          } ${
             geo?.isInside ? "bg-[#a7f3d0]" : geoError ? "bg-[#ff99c8]" : "bg-[#fff]"
           }`}
         >
@@ -484,17 +500,27 @@ export default function LaporPage() {
             </div>
 
             {/* Box Panduan & Pengingat GPS Khusus Warga */}
-            <div className="nb-box-sm bg-[#fff] rounded-xl p-3 space-y-1.5 border-2 border-[#121212]">
+            <div className="nb-box-sm bg-[#fff] rounded-xl p-3 space-y-2 border-2 border-[#121212]">
               <div className="flex items-center gap-1.5 font-black text-xs uppercase text-[#121212]">
                 <MapPin className="w-4 h-4 text-emerald-700 stroke-[3px]" />
-                <span>PANDUAN PENTING SEBELUM MENGIRIM:</span>
+                <span>PANDUAN SEBELUM MENGIRIM:</span>
               </div>
-              <ul className="text-[11px] font-bold text-[#333] space-y-1 pl-4 list-disc">
+              <ul className="text-[11px] font-bold text-[#333] space-y-1.5 pl-4 list-disc">
                 <li>
                   <strong className="text-[#121212]">Wajib di Lokasi:</strong> Pastikan Anda sedang berada di Desa Rau saat mengirim laporan agar titik GPS akurat.
                 </li>
-                <li>
-                  <strong className="text-[#121212]">Aktifkan Lokasi HP:</strong> Jika tombol kirim masih abu-abu/mati, klik tombol <span className="bg-[#121212] text-white px-1 py-0.2 rounded font-mono text-[9px]">Cek GPS</span> di bagian atas halaman.
+                <li className="flex flex-col gap-1 items-start">
+                  <span>
+                    <strong className="text-[#121212]">GPS Belum Aktif / Tombol Mati?</strong>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={triggerGpsShakeAndScroll}
+                    className="nb-btn bg-[#ffe600] text-[#121212] px-2.5 py-1 rounded text-[10px] font-black uppercase flex items-center gap-1 shadow-[2px_2px_0px_#121212]"
+                  >
+                    <RotateCw className="w-3 h-3 stroke-[3px]" />
+                    Klik Di Sini: Aktifkan & Cek GPS ➔
+                  </button>
                 </li>
                 <li>
                   <strong className="text-[#121212]">Verifikasi Balai Desa:</strong> Laporan akan masuk antrean petugas balai desa untuk ditinjau sebelum dipublikasikan.
@@ -506,17 +532,28 @@ export default function LaporPage() {
             <div className="space-y-1">
               <button
                 type="submit"
-                disabled={!geo?.isInside || submitting}
+                onClick={(e) => {
+                  if (!geo?.isInside) {
+                    e.preventDefault();
+                    triggerGpsShakeAndScroll();
+                  }
+                }}
+                disabled={submitting}
                 className={`w-full h-14 rounded-2xl font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 ${
                   geo?.isInside && !submitting
                     ? "nb-btn bg-[#ffe600] text-[#121212]"
-                    : "nb-btn-disabled"
+                    : "nb-btn bg-[#ff99c8] text-[#121212] hover:bg-[#ff80b5]"
                 }`}
               >
                 {submitting ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin stroke-[3px]" />
                     MENGIRIM ADUAN...
+                  </>
+                ) : !geo?.isInside ? (
+                  <>
+                    <AlertTriangle className="w-5 h-5 stroke-[3px] text-[#121212]" />
+                    GPS BELUM AKTIF / DI LUAR AREA (KLIK CEK)
                   </>
                 ) : (
                   <>
@@ -528,7 +565,7 @@ export default function LaporPage() {
 
               {!geo?.isInside && (
                 <p className="text-[10px] font-mono font-bold text-center text-rose-700 pt-0.5">
-                  ⚠️ Tombol kirim terkunci: Pastikan GPS aktif & Anda berada di area Desa Rau.
+                  ⚠️ Klik tombol di atas atau tombol "Cek GPS" untuk mengaktifkan lokasi.
                 </p>
               )}
             </div>
