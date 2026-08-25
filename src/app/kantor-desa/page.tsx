@@ -16,6 +16,7 @@ import {
   Send,
   Phone,
   ArrowLeft,
+  Image as ImageIcon,
 } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { LaporanRow } from "@/lib/supabase";
@@ -37,7 +38,6 @@ export default function KantorDesaPage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Cek session PIN di browser storage
   useEffect(() => {
     const savedAuth = sessionStorage.getItem("kantor_rau_auth");
     if (savedAuth === "true") {
@@ -157,7 +157,6 @@ export default function KantorDesaPage() {
     }
   };
 
-  // Ekspor Rekap Format CSV
   const handleExportCSV = () => {
     if (laporan.length === 0) {
       alert("Belum ada data untuk diekspor");
@@ -187,7 +186,6 @@ export default function KantorDesaPage() {
     document.body.removeChild(link);
   };
 
-  // Buka WhatsApp Warga
   const handleChatWarga = (l: LaporanRow) => {
     if (!l.no_wa) return;
     let cleanNumber = l.no_wa.replace(/[^0-9]/g, "");
@@ -287,7 +285,7 @@ export default function KantorDesaPage() {
       </header>
 
       <main className="p-4 space-y-4 flex-1">
-        {/* Ringkasan Metric */}
+        {/* Metric Counter */}
         <div className="grid grid-cols-4 gap-1.5 text-center font-black">
           <div className="nb-box-sm bg-white rounded-xl p-2">
             <span className="text-[9px] uppercase text-[#666] block">TOTAL</span>
@@ -307,7 +305,7 @@ export default function KantorDesaPage() {
           </div>
         </div>
 
-        {/* Modal Triage Editor Lengkap */}
+        {/* Modal Triage Editor */}
         {selectedLaporan && (
           <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
             <div className="nb-box bg-white rounded-2xl w-full max-w-md p-4 space-y-3 shadow-2xl max-h-[90vh] overflow-y-auto">
@@ -329,9 +327,24 @@ export default function KantorDesaPage() {
                 </button>
               </div>
 
-              <div className="nb-box-sm bg-[#ffe600] p-2.5 rounded-xl text-xs space-y-1">
-                <p className="font-black text-[#121212] uppercase">{selectedLaporan.judul}</p>
-                <p className="text-xs font-medium text-[#121212]">{selectedLaporan.deskripsi}</p>
+              <div className="nb-box-sm bg-[#ffe600] p-2.5 rounded-xl text-xs space-y-2">
+                <div>
+                  <p className="font-black text-[#121212] uppercase">{selectedLaporan.judul}</p>
+                  <p className="text-xs font-medium text-[#121212] mt-0.5">{selectedLaporan.deskripsi}</p>
+                </div>
+
+                {/* Foto Lampiran dari Warga (Jika Ada) */}
+                {selectedLaporan.foto_url && (
+                  <div className="rounded-lg border-2 border-[#121212] overflow-hidden bg-white">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={selectedLaporan.foto_url}
+                      alt="Foto Aduan Warga"
+                      className="w-full h-36 object-cover"
+                    />
+                  </div>
+                )}
+
                 <div className="pt-1.5 border-t border-[#121212] flex items-center justify-between">
                   <span className="text-[10px] font-mono font-bold">
                     RT {selectedLaporan.rt} / RW {selectedLaporan.rw} • {selectedLaporan.nama_pelapor}
@@ -481,6 +494,13 @@ export default function KantorDesaPage() {
                   <StatusBadge status={item.status} />
                 </div>
 
+                {item.foto_url && (
+                  <div className="relative rounded-lg border border-[#121212] overflow-hidden h-24 bg-slate-100">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={item.foto_url} alt="Thumbnail" className="w-full h-full object-cover" />
+                  </div>
+                )}
+
                 <p className="text-xs font-medium text-[#555] line-clamp-2">
                   {item.deskripsi}
                 </p>
@@ -510,7 +530,7 @@ export default function KantorDesaPage() {
                       }}
                       className="nb-btn bg-[#ffe600] px-2.5 py-0.5 rounded text-[10px] uppercase"
                     >
-                      Tanggapi ➔
+                      Tindak Lanjut ➔
                     </button>
                   </div>
                 </div>
