@@ -218,10 +218,14 @@ export default function LaporPage() {
               type="button"
               onClick={handleLocate}
               disabled={geoLoading}
-              className="nb-btn bg-[#121212] text-white text-[10px] font-black px-2.5 py-1 rounded uppercase flex items-center gap-1"
+              className={`nb-btn text-[10px] font-black px-3 py-1.5 rounded-lg uppercase flex items-center gap-1.5 transition-all ${
+                !geo?.isInside
+                  ? "animate-gps-pulse text-[#121212] font-black"
+                  : "bg-[#121212] text-white"
+              }`}
             >
-              <RotateCw className={`w-3 h-3 ${geoLoading ? "animate-spin" : ""}`} />
-              Cek GPS
+              <RotateCw className={`w-3.5 h-3.5 stroke-[3px] ${geoLoading ? "animate-spin" : ""}`} />
+              {!geo?.isInside ? "👉 KLIK CEK GPS" : "CEK ULANG"}
             </button>
           </div>
 

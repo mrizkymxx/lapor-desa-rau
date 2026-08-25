@@ -69,7 +69,7 @@
   scrollbar-width: none;
 }
 
-/* Animasi Getar (Shake Alert) untuk GPS Error / Belum Aktif */
+/* Animasi Getar (Shake Alert) */
 @keyframes nb-shake {
   0%, 100% { transform: translateX(0); }
   20%, 60% { transform: translateX(-6px); }
@@ -78,4 +78,22 @@
 
 .animate-shake {
   animation: nb-shake 0.4s ease-in-out;
+}
+
+/* Animasi Perhatian Berdenyut Otomatis untuk Tombol Cek GPS */
+@keyframes nb-gps-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 3px 3px 0px #121212;
+    background-color: #ffe600;
+  }
+  50% {
+    transform: scale(1.08) translate(-1px, -1px);
+    box-shadow: 5px 5px 0px #121212;
+    background-color: #ff99c8;
+  }
+}
+
+.animate-gps-pulse {
+  animation: nb-gps-pulse 1.6s infinite ease-in-out;
 }
