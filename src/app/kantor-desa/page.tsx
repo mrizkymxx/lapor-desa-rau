@@ -192,7 +192,10 @@ export default function KantorDesaPage() {
     if (cleanNumber.startsWith("0")) cleanNumber = "62" + cleanNumber.slice(1);
 
     const message = encodeURIComponent(
-      `Halo Bpk/Ibu ${l.nama_pelapor}, kami dari Pemerintah Desa Rau menindaklanjuti laporan Anda terkait "${l.judul}" (Tiket: ${l.kode_tiket}).`
+      `Assalamu'alaikum Wr. Wb. Bpk/Ibu ${l.nama_pelapor}.\n\n` +
+      `Kula saking Perangkat Balai Desa Rau badhe maringi kabar babagan laporan: *${l.judul}* (Nomor: ${l.kode_tiket}).\n\n` +
+      `Laporan panjenengan sampun dipun tampi lan sakmenika saweg dipun tindaklanjuti dening tim Balai Desa.\n\n` +
+      `Matur nuwun sanget atas kepedulian panjenengan kagem kemajuan Desa Rau.`
     );
     window.open(`https://wa.me/${cleanNumber}?text=${message}`, "_blank");
   };

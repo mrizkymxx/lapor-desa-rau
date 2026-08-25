@@ -39,8 +39,22 @@ export default function LacakDetailPage() {
   const handleShareWA = () => {
     if (!laporan) return;
     const currentUrl = window.location.href;
+    const statusText =
+      laporan.status === "selesai"
+        ? "Sampun Rampung / Selesai Dikerjakan"
+        : laporan.status === "diproses"
+        ? "Sedang Dikerjakan Petugas Desa"
+        : "Menunggu Giliran Ditinjau";
+
     const text = encodeURIComponent(
-      `📢 *LAPOR DESA RAU*\n\n📌 *${laporan.judul}*\nKode Tiket: ${laporan.kode_tiket}\nStatus: ${laporan.status.toUpperCase()}\n\nPantau perkembangan tindak lanjutnya di tautan berikut:\n${currentUrl}`
+      `Assalamu'alaikum Wr. Wb.\n\n` +
+      `Kabar Laporan Warga Desa Rau:\n` +
+      `*${laporan.judul}*\n\n` +
+      `Lokasi: RT ${laporan.rt} / RW ${laporan.rw}\n` +
+      `Nomor Laporan: ${laporan.kode_tiket}\n` +
+      `Status: *${statusText}*\n\n` +
+      `Matur nuwun. Perkembangan laporan saget dipun tingali wonten mriki:\n` +
+      `${currentUrl}`
     );
     window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
   };
