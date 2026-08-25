@@ -483,28 +483,55 @@ export default function LaporPage() {
               )}
             </div>
 
+            {/* Box Panduan & Pengingat GPS Khusus Warga */}
+            <div className="nb-box-sm bg-[#fff] rounded-xl p-3 space-y-1.5 border-2 border-[#121212]">
+              <div className="flex items-center gap-1.5 font-black text-xs uppercase text-[#121212]">
+                <MapPin className="w-4 h-4 text-emerald-700 stroke-[3px]" />
+                <span>PANDUAN PENTING SEBELUM MENGIRIM:</span>
+              </div>
+              <ul className="text-[11px] font-bold text-[#333] space-y-1 pl-4 list-disc">
+                <li>
+                  <strong className="text-[#121212]">Wajib di Lokasi:</strong> Pastikan Anda sedang berada di Desa Rau saat mengirim laporan agar titik GPS akurat.
+                </li>
+                <li>
+                  <strong className="text-[#121212]">Aktifkan Lokasi HP:</strong> Jika tombol kirim masih abu-abu/mati, klik tombol <span className="bg-[#121212] text-white px-1 py-0.2 rounded font-mono text-[9px]">Cek GPS</span> di bagian atas halaman.
+                </li>
+                <li>
+                  <strong className="text-[#121212]">Verifikasi Balai Desa:</strong> Laporan akan masuk antrean petugas balai desa untuk ditinjau sebelum dipublikasikan.
+                </li>
+              </ul>
+            </div>
+
             {/* Tombol Kirim Raksasa */}
-            <button
-              type="submit"
-              disabled={!geo?.isInside || submitting}
-              className={`w-full h-14 rounded-2xl font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 ${
-                geo?.isInside && !submitting
-                  ? "nb-btn bg-[#ffe600] text-[#121212]"
-                  : "nb-btn-disabled"
-              }`}
-            >
-              {submitting ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin stroke-[3px]" />
-                  MENGIRIM ADUAN...
-                </>
-              ) : (
-                <>
-                  <Send className="w-5 h-5 stroke-[3px]" />
-                  KIRIM KE BALAI DESA ➔
-                </>
+            <div className="space-y-1">
+              <button
+                type="submit"
+                disabled={!geo?.isInside || submitting}
+                className={`w-full h-14 rounded-2xl font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 ${
+                  geo?.isInside && !submitting
+                    ? "nb-btn bg-[#ffe600] text-[#121212]"
+                    : "nb-btn-disabled"
+                }`}
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin stroke-[3px]" />
+                    MENGIRIM ADUAN...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-5 h-5 stroke-[3px]" />
+                    KIRIM KE BALAI DESA ➔
+                  </>
+                )}
+              </button>
+
+              {!geo?.isInside && (
+                <p className="text-[10px] font-mono font-bold text-center text-rose-700 pt-0.5">
+                  ⚠️ Tombol kirim terkunci: Pastikan GPS aktif & Anda berada di area Desa Rau.
+                </p>
               )}
-            </button>
+            </div>
           </form>
         )}
       </main>
