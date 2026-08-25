@@ -24,11 +24,28 @@ function isRateLimited(ip: string): boolean {
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
+    const idOrTicket = url.searchParams.get("id");
     const status = url.searchParams.get("status");
     const kategori = url.searchParams.get("kategori");
     const search = url.searchParams.get("q");
     const mode = url.searchParams.get("mode"); // 'admin' atau publik (default)
 
+    // JIKA MENCARI SPESIFIK 1 TIKET (Untuk halaman /lacak/[id])
+    if (idOrTicket) {
+      const { data, error } = await supabase
+        .from("laporan")
+        .select("*, kategori:kategori_id(id, nama, slug, ikon)")
+        .or(`id.eq.${idOrTicket},kode_tiket.eq.${idOrTicket}`)
+        .maybeSingle();
+
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+
+      return NextResponse.json({ data });
+    }
+
+    // LIST ADUAN
     let query = supabase
       .from("laporan")
       .select("*, kategori:kategori_id(id, nama, slug, ikon)")

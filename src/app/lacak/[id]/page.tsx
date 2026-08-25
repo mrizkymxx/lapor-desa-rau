@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, MapPin, Calendar, CheckCircle2, Clock, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, CheckCircle2, Clock, Image as ImageIcon, ExternalLink } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { LaporanRow } from "@/lib/supabase";
 
@@ -22,11 +22,11 @@ export default function LacakDetailPage() {
   const fetchDetail = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/laporan`);
+      // Ambil detail spesifik berdasarkan id / kode tiket
+      const res = await fetch(`/api/laporan?id=${encodeURIComponent(id)}`);
       const json = await res.json();
       if (res.ok && json.data) {
-        const found = json.data.find((item: LaporanRow) => item.id === id || item.kode_tiket === id);
-        setLaporan(found || null);
+        setLaporan(json.data);
       }
     } catch (err) {
       console.error(err);
@@ -69,7 +69,7 @@ export default function LacakDetailPage() {
         <button
           type="button"
           onClick={() => router.back()}
-          className="nb-btn bg-[#ffe600] text-[#121212] p-1.5 rounded-lg active:scale-90"
+          className="nb-btn bg-[#ffe600] text-[#121212] p-1 rounded-lg active:scale-90"
         >
           <ArrowLeft className="w-5 h-5 stroke-[3px]" />
         </button>
@@ -105,6 +105,40 @@ export default function LacakDetailPage() {
           </div>
         </div>
 
+        {/* Peta Lokasi Titik Koordinat */}
+        {laporan.lat && laporan.lng && (
+          <div className="nb-box rounded-2xl p-4 space-y-2.5 bg-white">
+            <div className="flex items-center justify-between border-b-2 border-[#121212] pb-1.5">
+              <span className="text-xs font-black uppercase text-[#121212] flex items-center gap-1.5">
+                <MapPin className="w-4 h-4 stroke-[3px] text-emerald-600" />
+                TITIK KOORDINAT DI PETA DESA
+              </span>
+              <a
+                href={`https://maps.google.com/?q=${laporan.lat},${laporan.lng}`}
+                target="_blank"
+                rel="noreferrer"
+                className="nb-btn bg-[#ffe600] text-[#121212] px-2 py-0.5 rounded text-[10px] font-black uppercase flex items-center gap-1"
+              >
+                Google Maps <ExternalLink className="w-2.5 h-2.5 stroke-[3px]" />
+              </a>
+            </div>
+
+            {/* Clean OpenStreetMap Card (h-64 / 256px) */}
+            <div className="rounded-xl border-[2.5px] border-[#121212] overflow-hidden h-64 shadow-[3px_3px_0px_#121212] relative bg-[#e5e3df]">
+              <iframe
+                title="Peta Titik Laporan"
+                className="w-full h-[calc(100%+45px)] -mt-1 border-0"
+                scrolling="no"
+                src={`https://www.openstreetmap.org/export/embed.html?bbox=${laporan.lng - 0.0035}%2C${laporan.lat - 0.0035}%2C${laporan.lng + 0.0035}%2C${laporan.lat + 0.0035}&layer=mapnik&marker=${laporan.lat}%2C${laporan.lng}`}
+              />
+            </div>
+            <div className="flex items-center justify-between text-[10px] font-mono font-bold text-[#666] pt-0.5">
+              <span>LAT: {laporan.lat.toFixed(6)}</span>
+              <span>LNG: {laporan.lng.toFixed(6)}</span>
+            </div>
+          </div>
+        )}
+
         {/* Tanggapan Balai Desa */}
         {laporan.tanggapan_petugas && (
           <div className="nb-box bg-[#a7f3d0] rounded-2xl p-4 space-y-3">
@@ -121,7 +155,7 @@ export default function LacakDetailPage() {
               {laporan.tanggapan_petugas}
             </p>
 
-            {/* Foto Bukti Perbaikan dari Petugas (Jika Ada) */}
+            {/* Foto Bukti Perbaikan dari Petugas */}
             {laporan.foto_selesai_url && (
               <div className="space-y-1.5 pt-1">
                 <span className="text-[10px] font-black uppercase text-[#121212] flex items-center gap-1">
