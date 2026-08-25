@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, MapPin, Loader2, ChevronRight, MessageSquare, Plus, Image as ImageIcon } from "lucide-react";
+import { Search, MapPin, Loader2, ChevronRight, MessageSquare, Plus, Image as ImageIcon, ShieldAlert } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { BottomNav } from "@/components/BottomNav";
 import { LaporanRow } from "@/lib/supabase";
@@ -40,9 +40,9 @@ export default function RiwayatPage() {
     fetchLaporan();
   };
 
+  // Hanya filter status yang lolos verifikasi publik
   const STATUS_TABS = [
     { id: "semua", label: "SEMUA", color: "bg-white" },
-    { id: "masuk", label: "MENUNGGU", color: "bg-[#ffe600]" },
     { id: "diproses", label: "DIPROSES", color: "bg-[#70d6ff]" },
     { id: "selesai", label: "SELESAI", color: "bg-[#a7f3d0]" },
   ];
@@ -56,7 +56,7 @@ export default function RiwayatPage() {
             PAPAN ASPIRASI
           </h1>
           <p className="text-[11px] text-[#ffe600] font-mono font-bold mt-0.5">
-            TRANSPARANSI TUNTAS DESA RAU
+            LAPORAN TERVERIFIKASI BALAI DESA
           </p>
         </div>
 
@@ -70,6 +70,12 @@ export default function RiwayatPage() {
       </header>
 
       <main className="p-4 space-y-3 flex-1">
+        {/* Info Banner Moderasi */}
+        <div className="nb-box-sm bg-[#e4c1f9] rounded-xl p-2.5 text-[11px] font-bold text-[#121212] flex items-center gap-2">
+          <span>🛡️</span>
+          <span>Hanya laporan yang telah diverifikasi perangkat desa yang tampil di papan ini.</span>
+        </div>
+
         {/* Neo Search */}
         <form onSubmit={handleSearchSubmit} className="relative">
           <input
@@ -112,8 +118,8 @@ export default function RiwayatPage() {
         ) : laporan.length === 0 ? (
           <div className="nb-box rounded-2xl p-8 text-center bg-white space-y-2">
             <span className="text-3xl">📭</span>
-            <p className="text-sm font-black uppercase">BELUM ADA LAPORAN</p>
-            <p className="text-xs font-bold text-[#666]">Semua aduan masyarakat akan tampil di papan ini.</p>
+            <p className="text-sm font-black uppercase">BELUM ADA LAPORAN AKTIF</p>
+            <p className="text-xs font-bold text-[#666]">Laporan yang telah diverifikasi balai desa akan muncul di sini.</p>
           </div>
         ) : (
           <div className="space-y-3">

@@ -27,11 +27,18 @@ export async function GET(req: Request) {
     const status = url.searchParams.get("status");
     const kategori = url.searchParams.get("kategori");
     const search = url.searchParams.get("q");
+    const mode = url.searchParams.get("mode"); // 'admin' atau publik (default)
 
     let query = supabase
       .from("laporan")
       .select("*, kategori:kategori_id(id, nama, slug, ikon)")
       .order("created_at", { ascending: false });
+
+    // FILTER MODEL B:
+    // Jika BUKAN mode admin (akses publik), HANYA tampilkan laporan yang sudah diverifikasi/diproses admin (status 'diproses' atau 'selesai')
+    if (mode !== "admin") {
+      query = query.in("status", ["diproses", "selesai"]);
+    }
 
     if (status && status !== "semua") {
       query = query.eq("status", status);
@@ -106,7 +113,7 @@ export async function POST(req: Request) {
           is_anonim: Boolean(is_anonim),
           lat: Number(lat),
           lng: Number(lng),
-          status: "masuk",
+          status: "masuk", // Default: masuk ke admin dulu untuk diverifikasi
         },
       ])
       .select("*, kategori:kategori_id(id, nama, slug, ikon)")

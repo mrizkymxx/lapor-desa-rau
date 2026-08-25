@@ -60,7 +60,7 @@ export default function KantorDesaPage() {
   const fetchLaporan = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/laporan");
+      const res = await fetch("/api/laporan?mode=admin");
       const json = await res.json();
       if (res.ok) {
         setLaporan(json.data || []);
