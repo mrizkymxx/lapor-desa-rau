@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, MapPin, Calendar, Building2, Loader2, Sparkles } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, CheckCircle2, Clock, Image as ImageIcon } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { LaporanRow } from "@/lib/supabase";
 
@@ -38,7 +38,7 @@ export default function LacakDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center text-[#121212] gap-2 bg-[#f6f5f0]">
-        <Loader2 className="w-6 h-6 animate-spin stroke-[3px]" />
+        <div className="w-8 h-8 border-[3px] border-[#121212] border-t-transparent rounded-full animate-spin" />
         <span className="text-xs font-mono font-bold uppercase">Mencari detail tiket...</span>
       </div>
     );
@@ -107,13 +107,38 @@ export default function LacakDetailPage() {
 
         {/* Tanggapan Balai Desa */}
         {laporan.tanggapan_petugas && (
-          <div className="nb-box bg-[#a7f3d0] rounded-2xl p-4 space-y-2">
-            <div className="flex items-center gap-1.5 font-black text-xs uppercase text-[#121212] border-b-2 border-[#121212] pb-1">
-              <span>🏛️ TANGGAPAN BALAI DESA</span>
+          <div className="nb-box bg-[#a7f3d0] rounded-2xl p-4 space-y-3">
+            <div className="flex items-center justify-between border-b-2 border-[#121212] pb-1.5">
+              <span className="font-black text-xs uppercase text-[#121212]">
+                🏛️ TANGGAPAN PETUGAS DESA
+              </span>
+              <span className="font-mono text-[10px] font-bold bg-[#121212] text-white px-1.5 py-0.2 rounded">
+                RESMI
+              </span>
             </div>
+
             <p className="text-xs font-semibold text-[#121212] leading-relaxed">
               {laporan.tanggapan_petugas}
             </p>
+
+            {/* Foto Bukti Perbaikan dari Petugas (Jika Ada) */}
+            {laporan.foto_selesai_url && (
+              <div className="space-y-1.5 pt-1">
+                <span className="text-[10px] font-black uppercase text-[#121212] flex items-center gap-1">
+                  <ImageIcon className="w-3.5 h-3.5" />
+                  Foto Bukti Pengerjaan Lapangan:
+                </span>
+                <div className="rounded-xl border-[2.5px] border-[#121212] overflow-hidden shadow-[2.5px_2.5px_0px_#121212] bg-white">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={laporan.foto_selesai_url}
+                    alt="Bukti Selesai Petugas"
+                    className="w-full h-auto max-h-72 object-cover"
+                  />
+                </div>
+              </div>
+            )}
+
             <div className="pt-2 border-t-2 border-[#121212] flex items-center justify-between text-[11px] font-bold">
               <span>Petugas: {laporan.petugas_nama || "Perangkat Desa"}</span>
               {laporan.tgl_ditanggapi && (
@@ -128,25 +153,34 @@ export default function LacakDetailPage() {
           </div>
         )}
 
-        {/* Detail Aduan Lengkap */}
+        {/* Foto Bukti Awal dari Warga */}
         <div className="nb-box rounded-2xl p-4 space-y-3 bg-white">
           <span className="text-xs font-black uppercase text-[#121212] block border-b-2 border-[#121212] pb-1">
-            KETERANGAN LENGKAP
+            KETERANGAN & FOTO KONDISI AWAL
           </span>
 
           <p className="text-xs font-semibold text-[#333] whitespace-pre-wrap leading-relaxed">
             {laporan.deskripsi}
           </p>
 
-          {laporan.foto_url && (
-            <div className="rounded-xl border-[2.5px] border-[#121212] overflow-hidden shadow-[3px_3px_0px_#121212] bg-white">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={laporan.foto_url}
-                alt="Bukti Lampiran"
-                className="w-full h-auto max-h-80 object-cover"
-              />
+          {laporan.foto_url ? (
+            <div className="space-y-1">
+              <span className="text-[10px] font-black text-[#555] uppercase block">
+                Foto Dikirim Oleh Pelapor:
+              </span>
+              <div className="rounded-xl border-[2.5px] border-[#121212] overflow-hidden shadow-[3px_3px_0px_#121212] bg-white">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={laporan.foto_url}
+                  alt="Bukti Lampiran Warga"
+                  className="w-full h-auto max-h-80 object-cover"
+                />
+              </div>
             </div>
+          ) : (
+            <p className="text-[11px] font-mono text-[#888] italic pt-1">
+              (Pelapor tidak menyertakan foto lampiran)
+            </p>
           )}
         </div>
       </main>
