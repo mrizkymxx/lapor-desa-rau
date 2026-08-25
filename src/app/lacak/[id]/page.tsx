@@ -154,34 +154,35 @@ export default function LacakDetailPage() {
 
         {/* Peta Lokasi Titik Koordinat (Clean OpenStreetMap Pin Viewport) */}
         {laporan.lat && laporan.lng && (
-          <div className="nb-box rounded-2xl p-4 space-y-2 bg-white">
-            <div className="flex items-center justify-between border-b-2 border-[#121212] pb-1">
-              <span className="text-xs font-black uppercase text-[#121212] flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 stroke-[3px]" />
+          <div className="nb-box rounded-2xl p-4 space-y-2.5 bg-white">
+            <div className="flex items-center justify-between border-b-2 border-[#121212] pb-1.5">
+              <span className="text-xs font-black uppercase text-[#121212] flex items-center gap-1.5">
+                <MapPin className="w-4 h-4 stroke-[3px] text-emerald-600" />
                 TITIK KOORDINAT DI PETA DESA
               </span>
               <a
                 href={`https://maps.google.com/?q=${laporan.lat},${laporan.lng}`}
                 target="_blank"
                 rel="noreferrer"
-                className="text-[10px] font-black underline flex items-center gap-0.5 text-emerald-800"
+                className="nb-btn bg-[#ffe600] text-[#121212] px-2 py-0.5 rounded text-[10px] font-black uppercase flex items-center gap-1"
               >
-                Buka Google Maps <ExternalLink className="w-2.5 h-2.5" />
+                Google Maps <ExternalLink className="w-2.5 h-2.5 stroke-[3px]" />
               </a>
             </div>
 
-            {/* Clean Crop Container: Memotong banner footer teks OpenStreetMap */}
-            <div className="rounded-xl border-[2.5px] border-[#121212] overflow-hidden h-44 shadow-[2.5px_2.5px_0px_#121212] relative bg-[#e5e3df]">
+            {/* Clean Crop Container: Card Peta Lebih Besar & Luas (h-64 / 256px) */}
+            <div className="rounded-xl border-[2.5px] border-[#121212] overflow-hidden h-64 shadow-[3px_3px_0px_#121212] relative bg-[#e5e3df]">
               <iframe
                 title="Peta Titik Laporan"
-                className="w-full h-[calc(100%+42px)] -mt-1 border-0"
+                className="w-full h-[calc(100%+45px)] -mt-1 border-0"
                 scrolling="no"
-                src={`https://www.openstreetmap.org/export/embed.html?bbox=${laporan.lng - 0.003}%2C${laporan.lat - 0.003}%2C${laporan.lng + 0.003}%2C${laporan.lat + 0.003}&layer=mapnik&marker=${laporan.lat}%2C${laporan.lng}`}
+                src={`https://www.openstreetmap.org/export/embed.html?bbox=${laporan.lng - 0.0035}%2C${laporan.lat - 0.0035}%2C${laporan.lng + 0.0035}%2C${laporan.lat + 0.0035}&layer=mapnik&marker=${laporan.lat}%2C${laporan.lng}`}
               />
             </div>
-            <p className="text-[10px] font-mono font-bold text-[#666]">
-              Koordinat: {laporan.lat.toFixed(6)}, {laporan.lng.toFixed(6)}
-            </p>
+            <div className="flex items-center justify-between text-[10px] font-mono font-bold text-[#666] pt-0.5">
+              <span>LAT: {laporan.lat.toFixed(6)}</span>
+              <span>LNG: {laporan.lng.toFixed(6)}</span>
+            </div>
           </div>
         )}
 
