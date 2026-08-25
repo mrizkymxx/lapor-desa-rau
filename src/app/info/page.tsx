@@ -65,6 +65,19 @@ export default function InfoPage() {
             Sistem otomatis mengecek sensor GPS kamu (maksimal radius 2.0 km dari Balai Desa Rau) agar aduan yang masuk murni dari warga di lingkungan desa.
           </p>
         </section>
+
+        {/* Credit Pengabdian KKN */}
+        <section className="nb-box-sm bg-[#fff] rounded-2xl p-4 text-center space-y-1">
+          <span className="text-[10px] font-mono font-black uppercase text-[#666] block">
+            KOLABORASI & PENGABDIAN MASYARAKAT
+          </span>
+          <p className="text-xs font-black uppercase text-[#121212]">
+            Pemerintah Desa Rau & Tim KKN UNISNU Jepara Angkatan XXI
+          </p>
+          <p className="text-[10px] text-[#555] font-semibold">
+            Inovasi Digitalisasi Pelayanan & Aspirasi Warga Desa
+          </p>
+        </section>
       </main>
 
       <BottomNav />

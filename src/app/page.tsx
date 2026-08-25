@@ -91,6 +91,11 @@ export default function LandingPage() {
             Kanal aspirasi digital resmi warga Desa Rau, Kec. Kedung, Jepara. Foto, kirim dengan GPS, dan pantau pengerjaannya oleh balai desa sampai beres.
           </p>
 
+          <div className="inline-flex items-center gap-1.5 bg-[#121212] text-[#ffe600] px-2.5 py-1 rounded-lg text-[10px] font-mono font-black uppercase shadow-[2px_2px_0px_#fff]">
+            <span>★</span>
+            <span>Diinisiasi oleh Tim KKN UNISNU Jepara Angkatan XXI</span>
+          </div>
+
           <div className="pt-2 flex flex-col gap-2">
             <Link
               href="/lapor"
